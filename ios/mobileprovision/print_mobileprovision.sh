@@ -17,7 +17,7 @@ ExpirationDate :ExpirationDate
 Entitlements :Entitlements
 keychain-access-groups :Entitlements:keychain-access-groups
 get-task-allow :Entitlements:get-task-allow
-application-identifier :Entitlements:get-task-allow
+application-identifier :Entitlements:application-identifier
 com.apple.developer.team-identifier :Entitlements:com.apple.developer.team-identifier"
 
 
