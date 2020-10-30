@@ -26,7 +26,7 @@ while IFS= read -r -d $'\0' file; do
 done < <(find "$folder" -type f -name "*.mobileprovision"  -print0)
 
 select p in "${provisions_desc[@]}"; do
-    provision=${provisions[$REPLY]}
+    provision=${provisions[`expr $REPLY - 1`]}
     break
 done;
 
