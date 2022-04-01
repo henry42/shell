@@ -1,5 +1,5 @@
 #! /bin/sh -e
-set -x
+# set -x
 TVOS_SUPPORT=0
 
 # Output Path
@@ -16,8 +16,14 @@ if [[ -z $2 ]]; then
 fi
 
 if [[ -z $3 ]]; then
-    echo "Scheme name was not set. try to run ./build.sh Build Project Scheme"
+    echo "Scheme name was not set. try to run ./build.sh Build Project Scheme [Configuration]"
     exit 1
+fi
+
+CONFIGURATION=$4
+
+if [ -n "$CONFIGURATION" ]; then
+    CONFIGURATION="-configuration $CONFIGURATION"
 fi
 
 # Prints the archive path for simulator
@@ -40,7 +46,7 @@ function archive() {
 
     if [ "${PROJECT_NAME##*.}" = "xcworkspace" ]; then
         xcodebuild archive \
-            -workspace ${PROJECT_NAME} \
+            -workspace ${PROJECT_NAME} $CONFIGURATION\
             -scheme ${1} \
             -destination "${2}" \
             -archivePath "${3}" \
@@ -48,7 +54,7 @@ function archive() {
             BUILD_LIBRARY_FOR_DISTRIBUTION=YES | xcpretty
     else
         xcodebuild archive \
-            -project ${PROJECT_NAME}.xcodeproj \
+            -project ${PROJECT_NAME}.xcodeproj $CONFIGURATION\
             -scheme ${1} \
             -destination "${2}" \
             -archivePath "${3}" \
