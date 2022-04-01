@@ -23,7 +23,7 @@ fi
 CONFIGURATION=$4
 
 if [ -n "$CONFIGURATION" ]; then
-    CONFIGURATION="-configuration $CONFIGURATION"
+    CONFIGURATION=("-configuration" "$CONFIGURATION")
 fi
 
 # Prints the archive path for simulator
@@ -46,20 +46,20 @@ function archive() {
 
     if [ "${PROJECT_NAME##*.}" = "xcworkspace" ]; then
         xcodebuild archive \
-            -workspace ${PROJECT_NAME} $CONFIGURATION\
+            -workspace ${PROJECT_NAME} ${CONFIGURATION[*]}\
             -scheme ${1} \
             -destination "${2}" \
             -archivePath "${3}" \
             SKIP_INSTALL=NO \
-            BUILD_LIBRARY_FOR_DISTRIBUTION=YES | xcpretty
+            BUILD_LIBRARY_FOR_DISTRIBUTION=YES
     else
         xcodebuild archive \
-            -project ${PROJECT_NAME}.xcodeproj $CONFIGURATION\
+            -project ${PROJECT_NAME}.xcodeproj ${CONFIGURATION[*]}\
             -scheme ${1} \
             -destination "${2}" \
             -archivePath "${3}" \
             SKIP_INSTALL=NO \
-            BUILD_LIBRARY_FOR_DISTRIBUTION=YES | xcpretty
+            BUILD_LIBRARY_FOR_DISTRIBUTION=YES
     fi
 }
 # Builds archive for iOS/tvOS simulator & device
