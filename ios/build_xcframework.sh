@@ -2,25 +2,54 @@
 # set -x
 TVOS_SUPPORT=0
 
-# Output Path
-OUTPUT_DIR_PATH=$1
-# Xcode Project Name
-PROJECT_NAME=$2
-if [[ -z $1 ]]; then
-    echo "❌Output dir was not set. try to run ./build.sh Build"
+# Usage info
+show_help() {
+cat << EOF
+Usage: ${0##*/} [-h] -o OUTDIR -p PROJECT -s SCHEME [-c Configuration]
+EOF
+}
+
+OUTPUT_DIR_PATH=""
+PROJECT_NAME=""
+CONFIGURATION="Release"
+SCHEME=""
+
+OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
+while getopts "ho:p:c:s:" opt; do
+    case "$opt" in
+        h)
+            show_help
+            exit 0
+            ;;
+        p)  PROJECT_NAME=$OPTARG
+            ;;
+        o)  OUTPUT_DIR_PATH=$OPTARG
+            ;;
+        s)  SCHEME=$OPTARG
+            ;;
+        c)  CONFIGURATION=$OPTARG
+            ;;
+        '?')
+            show_help >&2
+            exit 1
+            ;;
+    esac
+done
+
+if [[ -z $OUTPUT_DIR_PATH ]]; then
+    show_help
     exit 1
 fi
-if [[ -z $2 ]]; then
-    echo "❌Project name or workspace was not set. try to run ./build.sh Build Project"
+if [[ -z $PROJECT_NAME ]]; then
+    show_help
     exit 1
 fi
 
-if [[ -z $3 ]]; then
-    echo "Scheme name was not set. try to run ./build.sh Build Project Scheme [Configuration]"
+if [[ -z $SCHEME ]]; then
+    show_help
     exit 1
 fi
 
-CONFIGURATION=$4
 
 if [ -n "$CONFIGURATION" ]; then
     CONFIGURATION=("-configuration" "$CONFIGURATION")
@@ -100,7 +129,7 @@ echo "🚀 Process started 🚀"
 echo "📂 Evaluating Output Dir"
 echo "🧼 Cleaning the dir: ${OUTPUT_DIR_PATH}"
 rm -rf $OUTPUT_DIR_PATH
-DYNAMIC_FRAMEWORK=${3}
+DYNAMIC_FRAMEWORK=${SCHEME}
 echo "📝 Archive $DYNAMIC_FRAMEWORK"
 buildArchive ${DYNAMIC_FRAMEWORK}
 echo "🗜 Create $DYNAMIC_FRAMEWORK.xcframework"
